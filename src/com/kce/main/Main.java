@@ -2,14 +2,13 @@ package com.kce.main;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.kce.bank.*;
 import com.kce.dao.BankDAO;
 
 public class Main {
-	public static void main(String[] args) throws SQLException, InsufficientFundsException {
+	public static void main(String[] args) throws Exception {
 		Connection con = DBUtil.getConnection();
 		
 		Statement smt = con.createStatement();
@@ -25,7 +24,14 @@ public class Main {
 		BankDAO bankdao = new BankDAO();
 		
 		if(bankdao.validateAccount("1234567892")) {
-			System.out.print("true vanthurchu");
+			System.out.println("true vanthurchu");
 		}
+		
+		System.out.println(bankdao.findBalance("1234567892"));
+		
+		if(bankdao.updateBalance("1234567892", 1000.00f)) {
+			System.out.println("Updated Successfully");
+		}
+		
 	}
 }
