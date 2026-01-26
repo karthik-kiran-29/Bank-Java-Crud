@@ -1,16 +1,19 @@
 package com.kce.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.time.LocalDate;
 
 import com.kce.bank.DBUtil;
 import com.kce.bean.TransferBean;
 
 
 public class BankDAO {
+	
+	private int  seqNumber = 0;
 	
 	private Connection con =  DBUtil.getConnection();
 	
@@ -51,26 +54,28 @@ public class BankDAO {
 	}
 	
 	public boolean transferMoney(TransferBean transferbean) {
-		if(transferbean!=null) {
-			try {
-				// we are using autocommit off so SQL doesn't get pre-compiled
-				con.setAutoCommit(false); // used for transaction
-				
-				Statement smt = con.createStatement();
-				
-				int newBalance = (int)( findBalance(transferbean.getFromAccountNumber()) - transferbean.getAmount());
-				
-				smt.executeUpdate("UPDATE account_tbl SET balance" + newBalance + "where Account_Number= "  + transferbean.getFromAccountNumber() )
+		try {
+	        String query = "INSERT INTO transfer_tbl (Transaction_id, Account_Number , Beneficiary_acc_number , Transaction_Date , Transaction_Amount)  VALUES(?,?,?,?,?)";
+	        
+			PreparedStatement ps  = con.prepareStatement(query);
 			
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			ps.setInt(1, generateSequenceNumber());
+			ps.setString(2,transferbean.getFromAccountNumber());
+			ps.setString(3,transferbean.getToAccountNumber());
+			ps.setDate(4,(Date) transferbean.getDateOfTransaction());
+			ps.setInt(5,(int) transferbean.getAmount());
+			
+			int rows  = ps.executeUpdate();
+			
+			if(rows>0) {
+				return true;
 			}
 			
-			
-			
-			
-		}else return false;
+			return false;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	public boolean updateBalance(String accountNumber,float newBalance) {
@@ -95,4 +100,11 @@ public class BankDAO {
 		}
 		return false;
 	}
+	
+	public int generateSequenceNumber() {
+		seqNumber+=1;
+		return seqNumber;
+	}
+	
+	
 }

@@ -33,5 +33,7 @@ public class Main {
 			System.out.println("Updated Successfully");
 		}
 		
+		if(bankdao.transferMoney(null))
+		
 	}
 }
