@@ -19,6 +19,10 @@ public class TransferBean {
 		this.amount = amount;
 	}
 
+	public TransferBean() {
+		super();
+	}
+
 	public int getTransactionId() {
 		return transactionId;
 	}
