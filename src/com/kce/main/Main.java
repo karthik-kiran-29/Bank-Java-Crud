@@ -3,9 +3,12 @@ package com.kce.main;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Date;
 
 import com.kce.bank.*;
+import com.kce.bean.TransferBean;
 import com.kce.dao.BankDAO;
+import com.kce.service.BankService;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
@@ -29,11 +32,18 @@ public class Main {
 		
 		System.out.println(bankdao.findBalance("1234567892"));
 		
-		if(bankdao.updateBalance("1234567892", 1000.00f)) {
-			System.out.println("Updated Successfully");
-		}
+		BankService service = new BankService();
 		
-		if(bankdao.transferMoney(null))
+		System.out.println(service.checkBalance("1234567892"));
 		
+		TransferBean transferbean = new TransferBean(1,"1234567892","1234567893",new Date(),1000f);
+		
+		System.out.println(service.transfer(transferbean));
+			
+			
+			
+			
+			
+			
 	}
 }

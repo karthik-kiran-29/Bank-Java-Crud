@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 
 import com.kce.bank.DBUtil;
@@ -62,7 +63,10 @@ public class BankDAO {
 			ps.setInt(1, generateSequenceNumber());
 			ps.setString(2,transferbean.getFromAccountNumber());
 			ps.setString(3,transferbean.getToAccountNumber());
-			ps.setDate(4,(Date) transferbean.getDateOfTransaction());
+			
+			Date sqlDate = new Date(transferbean.getDateOfTransaction().getTime());
+			
+			ps.setDate(4,sqlDate);
 			ps.setInt(5,(int) transferbean.getAmount());
 			
 			int rows  = ps.executeUpdate();
@@ -102,8 +106,19 @@ public class BankDAO {
 	}
 	
 	public int generateSequenceNumber() {
-		seqNumber+=1;
-		return seqNumber;
+		try {
+			Statement smt = con.createStatement();
+			
+			ResultSet rs = smt.executeQuery("SELECT  MAX(Transaction_id) from transfer_tbl");
+			
+			rs.next();
+			
+			return rs.getInt(1)+1;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
 	}
 	
 	
